@@ -9,8 +9,9 @@
       text-color="#fff"
       active-text-color="#ffd04b"
       router
+      :collapse="isCollapse"
     >
-      <el-menu-item index="/home">
+      <el-menu-item index="/home" >
         <i class="el-icon-s-home"></i>
         <span slot="title">首页</span>
       </el-menu-item>
@@ -18,19 +19,19 @@
         <i class="el-icon-document"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>
-      <el-menu-item index="/image">
+      <el-menu-item index="/image" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-image"></i>
         <span slot="title">素材管理</span>
       </el-menu-item>
-      <el-menu-item index="/article">
+      <el-menu-item index="/article" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-publish"></i>
         <span slot="title">发布文章</span>
       </el-menu-item>
-      <el-menu-item index="/comment">
+      <el-menu-item index="/comment" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-Comment"></i>
         <span slot="title">评论管理</span>
       </el-menu-item>
-      <el-menu-item index="/fans">
+      <el-menu-item index="/fans" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-fans"></i>
         <span slot="title">粉丝管理</span>
       </el-menu-item>
@@ -46,9 +47,16 @@
 export default {
   name: "SideBar",
   components: {},
-  props: {},
+  props: {
+    isCollapse: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
-    return {};
+    return {
+      
+    };
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -62,10 +70,18 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.nav-menu {
+.nav-menu:not(.el-menu--collapse) {
+  width: 200px;
+  span {
+    padding-right: 30px;
+  }
   .iconfont {
-    padding-left: 5px;
+    text-align: left;
+    margin-left: 4px;
     margin-right: 9px;
   }
+}
+.menu-item {
+  text-align: center;
 }
 </style>

@@ -29,7 +29,7 @@
 <script>
 import request from "@/utils/request";
 
-import {logInApi} from "@/api/user"
+import { logInApi } from "@/api/user";
 
 export default {
   name: "",
@@ -89,19 +89,25 @@ export default {
       // 开启登录loading
       this.loginLoading = true;
 
-      
-        logInApi(this.user).then((res) => {
+      logInApi(this.user)
+        .then((res) => {
           console.log(res);
           this.$message({
             message: "登录成功",
             type: "success",
           });
+
+          // 将接口返回的用户相关数据放到本地存储，方便应用数据共享
+          // 本地存储只能存储字符串
+          // 如果需要存储对象、数组类型的数据，则把他们转为 JSON 格式字符串进行存储
+          window.localStorage.setItem("user", JSON.stringify(res.data.data));
+
           this.loginLoading = false;
           // 跳转到首页
           // this.$router.push('/home')
           this.$router.push({
-            name: 'home'
-          })
+            name: "home",
+          });
         })
         .catch((err) => {
           console.log(err);
