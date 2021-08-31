@@ -28,3 +28,35 @@ export const deleteArticle = articleId => {
     url: `/mp/v1_0/articles/${articleId}`,
   })
 }
+
+// 发布文章
+export const addArticle = (article, draft = false) => {
+  return request({
+    method: 'POST',
+    url: '/mp/v1_0/articles',
+    params: {
+      draft
+    },
+    data: article
+  })
+}
+
+// 编辑文章
+export const editArticle = (articleId, article, draft = false) => {
+  return request({
+    method: 'PUT',
+    url: `/mp/v1_0/articles/${articleId}`,
+    params: {
+      draft
+    },
+    data: article
+  })
+}
+
+// 获取指定文章
+export const getSpecifiedArticle = (articleId) => {
+  return request({
+    method: 'GET',
+    url: `/mp/v1_0/articles/${articleId}`,
+  })
+}

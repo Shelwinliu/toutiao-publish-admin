@@ -8,7 +8,7 @@
         </el-breadcrumb>
       </div>
 
-      <el-form ref="form" :model="form" label-width="40px" v-loading="loading">
+      <el-form ref="form" label-width="40px" v-loading="loading">
         <el-form-item label="状态">
           <el-radio-group v-model="status" @change="loadArticles(1)">
             <!--
@@ -60,9 +60,9 @@
       </el-form>
     </el-card>
 
-    <el-card>
+    <el-card body-style="height:600px">
       <div slot="header">根据筛选条件共查询到 {{ totalPages }} 条结果：</div>
-      <el-table :data="articleLists" style="width: 100%" v-loading="loading">
+      <el-table :data="articleLists" style="width: 100%" v-loading="loading" height="560px">
         <el-table-column label="封面" width="180">
           <template slot-scope="scope">
             <el-image
@@ -94,6 +94,7 @@
               size="small"
               type="primary"
               circle
+              @click="$router.push(`/publish?id=${scope.row.id}`)"
             ></el-button>
             <el-button
               icon="el-icon-delete"
@@ -127,22 +128,15 @@ import {
   deleteArticle,
 } from "@/api/content.js";
 
+import { articleChannelMixin } from "@/utils/mixin";
+
 export default {
   name: "Content",
+  mixins: [articleChannelMixin],
   components: {},
   props: {},
   data() {
     return {
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-      },
       articleLists: [],
       articleStatus: [
         { status: 0, text: "草稿", type: "info" }, // 0
@@ -151,11 +145,10 @@ export default {
         { status: 3, text: "审核失败", type: "warning" }, // 3
         { status: 4, text: "已删除", type: "danger" }, // 4
       ],
+      channelId: null,
       totalPages: 0,
       perPage: 10,
       status: null, // 查询文章的状态，不传就是全部
-      channels: [], // 文章频道列表
-      channelId: null,
       dateRange: null,
       loading: true,
       currentPage: 1,
@@ -166,7 +159,6 @@ export default {
   watch: {},
   created() {
     this.loadArticles();
-    this.loadChannels();
   },
   mounted() {},
   methods: {
@@ -193,12 +185,6 @@ export default {
       });
     },
 
-    loadChannels() {
-      getArticleChannels().then((res) => {
-        this.channels = res.data.data.channels;
-      });
-    },
-
     onCurrentChange(page) {
       this.loadArticles(page);
     },
@@ -219,7 +205,7 @@ export default {
           });
           deleteArticle(articleId.toString()).then((res) => {
             console.log(res);
-            this.loadArticles(this.currentPage)
+            this.loadArticles(this.currentPage);
           });
         })
         .catch(() => {

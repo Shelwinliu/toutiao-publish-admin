@@ -19,11 +19,11 @@
         <i class="el-icon-document"></i>
         <span slot="title">内容管理</span>
       </el-menu-item>
-      <el-menu-item index="/image" :class="{'menu-item': isCollapse}">
+      <el-menu-item index="/material" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-image"></i>
         <span slot="title">素材管理</span>
       </el-menu-item>
-      <el-menu-item index="/article" :class="{'menu-item': isCollapse}">
+      <el-menu-item index="/publish" :class="{'menu-item': isCollapse}">
         <i class="iconfont icon-publish"></i>
         <span slot="title">发布文章</span>
       </el-menu-item>
