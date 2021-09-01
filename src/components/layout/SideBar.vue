@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-menu
-      default-active="/home"
+      :default-active="defaultActive"
       class="nav-menu"
       @open="handleOpen"
       @close="handleClose"
@@ -51,11 +51,11 @@ export default {
     isCollapse: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
-      
+      defaultActive: this.$route.path
     };
   },
   methods: {

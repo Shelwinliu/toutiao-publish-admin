@@ -7,6 +7,7 @@ import Layout from '@/views/layout/Layout'
 import Content from '@/views/content/Content'
 import Publish from '@/views/publish/Publish'
 import Material from '@/views/material/Material'
+import Comment from '@/views/comment/Comment'
 
 Vue.use(VueRouter)
 
@@ -43,6 +44,11 @@ const routes = [
         path: 'material',
         name: 'material',
         component: Material
+      },
+      {
+        path: 'comment',
+        name: 'comment',
+        component: Comment
       }
     ]
   },
