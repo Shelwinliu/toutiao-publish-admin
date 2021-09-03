@@ -27,3 +27,29 @@ export const getUserProfile = () => {
   })
 }
 
+// 编辑用户头像
+export const editUserAvatar = photo => {
+  return request({
+    method: "PATCH",
+    url: "/mp/v1_0/user/photo",
+    data: photo
+  })
+}
+
+// 编辑用户资料
+export const editUserProfile = modifiedProfile => {
+  return request({
+    method: "PATCH",
+    url: "/mp/v1_0/user/profile",
+    data: modifiedProfile
+  })
+}
+
+// 获取粉丝列表
+export const getFansList = params => {
+  return request({
+    method: "GET",
+    url: "/mp/v1_0/followers",
+    params
+  })
+}

@@ -8,6 +8,8 @@ import Content from '@/views/content/Content'
 import Publish from '@/views/publish/Publish'
 import Material from '@/views/material/Material'
 import Comment from '@/views/comment/Comment'
+import PersonalSettings from '@/views/personalSettings/PersonalSettings'
+import Fans from '@/views/fans/Fans'
 
 Vue.use(VueRouter)
 
@@ -49,6 +51,16 @@ const routes = [
         path: 'comment',
         name: 'comment',
         component: Comment
+      },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: PersonalSettings
+      },
+      {
+        path: 'fans',
+        name: 'fans',
+        component: Fans
       }
     ]
   },

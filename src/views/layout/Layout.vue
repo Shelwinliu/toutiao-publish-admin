@@ -40,6 +40,8 @@ import Dropdown from "@/components/layout/Dropdown";
 
 import { getUserProfile } from "@/api/user";
 
+import { EventBus } from "@/utils/event-bus.js";
+
 export default {
   name: "Layout",
   components: {
@@ -53,9 +55,14 @@ export default {
       isCollapse: false, // 侧边栏展开状态
     };
   },
+  watch: {},
   created() {
     this.loadUserProfile();
+    EventBus.$on("updateProfile", (user) => {
+      this.user = user;
+    });
   },
+  mounted() {},
   methods: {
     loadUserProfile() {
       getUserProfile().then((res) => {
@@ -70,8 +77,8 @@ export default {
       })
         .then(() => {
           this.$message({
-            type: 'success',
-            message: '退出成功'
+            type: "success",
+            message: "退出成功",
           });
           // 把用户的登录状态清除
           window.localStorage.removeItem("user");

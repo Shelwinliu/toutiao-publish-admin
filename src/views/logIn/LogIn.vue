@@ -5,6 +5,7 @@
         <img class="logo" src="@/assets/images/logIn/logo_index.png"></img>
       </div>
 
+      <!-- prop 要与 data 中的字段名一致 -->
       <el-form class="login-form" ref="login-form" :model="user" :rules="formRules">
       <el-form-item  prop="mobile">
         <el-input v-model="user.mobile" placeholder="请输入手机号"></el-input>
