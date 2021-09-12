@@ -38,7 +38,7 @@ export const paginationMixin = {
         per_page: this.perPage,
       }).then((res) => {
         const { results, total_count: totalCount } = res.data.data;
-        
+
         this.fansList = results;
         this.loading = false;
         this.totalPages = totalCount;
@@ -46,6 +46,33 @@ export const paginationMixin = {
     },
     onCurrentChange(page) {
       this.loadFansList(page);
+    },
+  },
+}
+
+export const fileUploadMixin = {
+  data() {
+    return {
+      previewURL: null,
+      dialogUploadVisible: false,
+    };
+  },
+  methods: {
+    // 图片预览
+    onFileChange() {
+      // Fetches the first file in the node's file list as a File object
+      const previewFile = this.$refs.upload.files[0];
+      // The URL.createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+      const blobData = URL.createObjectURL(previewFile);
+      this.previewURL = blobData;
+
+      // 展示弹出层，预览用户选择的图片
+      this.dialogUploadVisible = true;
+
+      // 解决选择相同文件时不触发change事件的问题
+      // A file input's value attribute contains a DOMString that represents the path to the selected file(s)
+      if (this.uploadValueReset)
+        this.$refs.upload.value = "";
     },
   },
 }

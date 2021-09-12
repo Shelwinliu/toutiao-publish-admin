@@ -8,7 +8,7 @@
         </el-breadcrumb>
       </div>
 
-      <el-tabs type="card" @tab-click="handleClick">
+      <el-tabs type="card" @tab-click="loadEcharts=true">
         <el-tab-pane label="粉丝列表"
           ><el-form v-loading="loading"><el-row :gutter="20">
             <el-col :span="4" v-for="(item, index) in fansList" :key="index"
@@ -18,11 +18,8 @@
                 <el-button type="primary" plain>+关注</el-button>
                 </div
             ></el-col> </el-row
-        ></el-form></el-tab-pane>
-        <el-tab-pane label="粉丝画像">Config</el-tab-pane>
-      </el-tabs>
-
-      <el-pagination
+        ></el-form>
+        <el-pagination
         layout="prev, pager, next"
         background
         :total="totalPages"
@@ -32,6 +29,16 @@
         :disabled="loading"
       >
       </el-pagination>
+      </el-tab-pane>
+
+        <el-tab-pane label="粉丝画像">
+          <template v-if="loadEcharts">
+          <bar-chart></bar-chart>
+        <baidu-map></baidu-map>
+        </template></el-tab-pane>
+      </el-tabs>
+
+      
     </el-card>
   </div>
 </template>
@@ -41,14 +48,18 @@ import { getFansList } from "@/api/user.js";
 
 import { paginationMixin } from "@/utils/mixin";
 
+import BaiduMap from "@/components/echarts/BaiduMap";
+import BarChart from "@/components/echarts/BarChart.vue";
+
 export default {
   name: "Fans",
-  components: {},
+  components: { BaiduMap, BarChart },
   props: {},
   mixins: [paginationMixin],
   data() {
     return {
       fansList: [],
+      loadEcharts: false,
     };
   },
   computed: {},
@@ -57,11 +68,7 @@ export default {
     this.loadFansList();
   },
   mounted() {},
-  methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-  },
+  methods: {},
 };
 </script>
 

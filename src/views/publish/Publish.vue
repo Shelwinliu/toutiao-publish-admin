@@ -21,7 +21,6 @@
         </el-form-item>
 
         <el-form-item label="内容" prop="content">
-          <!-- <el-input type="textarea" v-model="article.content"></el-input> -->
           <el-tiptap
             v-model="article.content"
             :extensions="extensions"
@@ -33,17 +32,50 @@
           ></el-tiptap>
         </el-form-item>
 
-        <el-form-item label="封面：">
+        <el-form-item label="封面">
           <el-radio-group v-model="article.cover.type">
             <el-radio :label="1">单图</el-radio>
             <el-radio :label="3">三图</el-radio>
             <el-radio :label="0">无图</el-radio>
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
-        </el-form-item>
+          <!--
+            我们需要把选择的封面图片的地址放到 article.cover.images 数组中
 
-        <el-form-item label="">
-          <el-image></el-image>
+            当你给事件处理函数传递了自定义参数以后，就无法得到原本的那个数据参数了。
+
+            如果想要在事件处理函数自定义传参以后还想得到原来的那个事件本身的参数，则手动指定 $event，它就代表那个事件本身的参数
+
+            在组件上使用 v-model
+
+            当你给子组件提供的数据既要使用还要修改，这个时候我们可以使用 v-model 简化数据绑定。
+            v-model="article.cover.images[index]"
+              给子组件传递了一个名字叫 value 的数据
+              :value="article.cover.images[index]"
+              默认监听 input 事件，当事件发生，它会让绑定数据 = 事件参数
+              @input="article.cover.images[index] = 事件参数"
+
+            注意：v-model 仅仅是简写了而已，本质还在在父子组件通信
+
+            v-model 的参考文档：https://cn.vuejs.org/v2/guide/components-custom-events.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6%E7%9A%84-v-model
+           -->
+          <template v-if="article.cover.type > 0">
+            <div style="display: flex">
+              <upload-cover
+                v-for="(i, index) in article.cover.type"
+                :key="index"
+                v-model="article.cover.images[index]"
+              >
+              </upload-cover>
+              <!-- <upload-cover
+                v-for="(i, index) in article.cover.type"
+                :key="index"
+                @uploadCover="onUploadCover(index, $event)"
+                :coverSrc="article.cover.images[index]"
+              >
+              </upload-cover> -->
+            </div>
+          </template>
         </el-form-item>
 
         <el-form-item label="频道" prop="channel_id">
@@ -71,6 +103,9 @@
 
 <script>
 import { articleChannelMixin } from "@/utils/mixin";
+import { formDataReq } from "@/utils/functions.js";
+
+import UploadCover from "@/views/publish/components/UploadCover";
 
 import { addArticle, getSpecifiedArticle, editArticle } from "@/api/content.js";
 import { uploadImage } from "@/api/image.js";
@@ -104,6 +139,7 @@ export default {
   name: "Publish",
   components: {
     "el-tiptap": ElementTiptap,
+    UploadCover,
   },
   props: {},
   mixins: [articleChannelMixin],
@@ -114,8 +150,8 @@ export default {
         content: "",
         cover: {
           // 文章封面
-          type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
-          images: [""], // 封面图片的地址
+          type: 1, // 封面类型 -1:自动，0-无图，1-1张，3-3张
+          images: [], // 封面图片的地址
         },
         channel_id: null,
       },
@@ -147,7 +183,7 @@ export default {
             },
           },
         ],
-        channel_id: [{ required: true, message: "请选择文章频道"}],
+        channel_id: [{ required: true, message: "请选择文章频道" }],
       },
 
       extensions: [
@@ -160,11 +196,11 @@ export default {
         new Image({
           uploadRequest(file) {
             // 如果接口要求 Content-Type 是 multipart/form-data，则请求体必须使用 FormData
-            const fd = new FormData();
-            fd.append("image", file);
+            // const fd = new FormData();
+            // fd.append("image", file);
             // 第1个 return 是返回 Promise 对象
             // 为什么？因为 axios 本身就是返回 Promise 对象
-            return uploadImage(fd).then((res) => {
+            return uploadImage(formDataReq("image", file)).then((res) => {
               return res.data.data.url;
             });
           },
@@ -195,6 +231,12 @@ export default {
     onPublish(draft = false) {
       this.$refs["publish-form"].validate((valid) => {
         if (!valid) return;
+
+        const {images, type} = this.article.cover
+        if(images.length < type) {
+          this.$message(`请选择${type}张图片作为封面`)
+          return
+        }
 
         const articleId = this.$route.query.id;
         if (articleId) {
@@ -238,9 +280,38 @@ export default {
         if (!valid) return;
       });
     },
+
+    onUploadCover(index, url) {
+      this.article.cover.images[index] = url;
+    },
   },
 };
 </script>
 
 <style lang='less' scoped>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 150px;
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+  border: 1px dotted rgb(164, 164, 247);
+  border-radius: 5%;
+}
+.avatar {
+  width: 150px;
+  height: 150px;
+  display: block;
+}
 </style>

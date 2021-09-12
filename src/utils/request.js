@@ -1,5 +1,9 @@
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+// 非组件模块无法直接使用router，所以需要导入
+import router from '@/router'
+// Element has added a global method $message for Vue.prototype. So in a vue instance you can call Message like what we did in this page.
+import { Message } from 'element-ui';
 
 const request = axios.create({
   baseURL: 'http://api-toutiao-web.itheima.net',
@@ -37,6 +41,33 @@ request.interceptors.request.use(config => {
   return config;
 }, err => {
   // Do something with request error
+  return Promise.reject(error);
+});
+
+// Add a response interceptor
+request.interceptors.response.use(function (response) {
+  // Any status code that lie within the range of 2xx cause this function to trigger
+  // Do something with response data
+  return response;
+}, function (error) {
+  // Any status codes that falls outside the range of 2xx cause this function to trigger
+  // console.dir(error)
+  const { status } = error.response
+  if (status === 401) {
+    // 跳转到登录页面
+    // 清除本地存储中的用户登录状态
+    window.localStorage.removeItem('user')
+    router.push('/login')
+    Message.error('登录状态无效，请重新登录');
+  } else if (status === 403) {
+    // token 未携带或已过期
+    Message.error('没有操作权限')
+  } else if (status === 400) {
+    // 客户端参数错误
+    Message.error('参数错误，请检查请求参数')
+  } else if (status >= 500) {
+    Message.error('服务端内部异常，请稍后重试')
+  }
   return Promise.reject(error);
 });
 
